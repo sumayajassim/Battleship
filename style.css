@@ -1,0 +1,17 @@
+.board{
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-auto-rows: 50px;
+    height: 500px;
+    width: 500px;
+}
+
+.board-item{
+    height: 50px;
+    width: 50px;
+    border: 1px solid black;
+}
+
+.ship{
+    background-color: blue;
+}
