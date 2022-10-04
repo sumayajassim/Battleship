@@ -9,9 +9,14 @@ body{
 }
 
 .container{
+    /* margin: 0 auto; */
+    padding: 0 100px;
+}
+
+.flex-box{
     display: flex;
     flex-direction: row-reverse;
-    padding: 0 100px;
+    transition: all .2s;
 }
 .board{
     display: grid;
@@ -19,9 +24,21 @@ body{
     grid-auto-rows: 40px;
     height: 400px;
     width: 400px;
-    /* margin: 0 auto; */
+    margin: 20px auto;
 }
 
+.player_board{
+    width: 250px;
+    height: 250px;
+    grid-auto-rows: auto;
+}
+.computer-board-item{
+    height: 18px !important;
+    width: 18px !important;
+}
+.hide {
+    display: none !important;
+}
 
 .sub-board{
 
@@ -57,4 +74,26 @@ button{
     border-radius: 10px;
     cursor: pointer;
     font-family: 'Wallpoet', cursive;
+}
+
+.player-turn-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+    width: 600px;
+    padding: 20px;
+}
+
+.player-turn-1 {
+    /* font-family: 'Titan One', cursive; */
+    font-size: 50px;
+    font-weight: 900;
+    color: rgb(255, 242, 3);
+}
+
+.player-turn-2 {
+    /* font-family: 'Titan One', cursive; */
+    font-size: 50px;
+    font-weight: 900;
+    color: rgb(255, 3, 213);
 }
