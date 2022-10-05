@@ -35,6 +35,7 @@ body{
 .computer-board-item{
     height: 18px !important;
     width: 18px !important;
+    font-size: 15px !important;
 }
 .hide {
     display: none !important;
@@ -49,6 +50,8 @@ body{
     width: 30px;
     border: 2px solid #FFFFFF;
     background-color:rgba(217, 217, 217, 0.2);
+    font-size: 26px;
+    color: wheat;
     /* opacity: 20%; */
 }
 
