@@ -8,13 +8,16 @@ let playerTurnContainer = document.querySelector('.player-turn-container');
 let secondContainer = document.querySelector('.second-container');
 let playerBoard = document.querySelector('.player_board');
 let computerBoardItems = document.querySelectorAll('.computer-board-item');
+let overlayMsg = document.querySelector('.overlay-message');
 let attackedShipIndex = null;
 let originalIndex = null;
 let checkSurroundedIndexes = -1;
 let found = false;
+let counter1 = document.getElementById('counter-1');
+let counter2 = document.getElementById('counter-2');
 // let clickable = false;
 
-
+let resetBtn = document.querySelector('#reset');
 let playerArrOfIndexes = [];
 let computerArrOfIndexes = [];
 let playerShipsIndexes = [];
@@ -114,6 +117,10 @@ submitBtn.addEventListener('click', () => {
     playerTurn = true;
 });
 
+
+
+
+
 drawShips();
 
 function drawShips() {
@@ -146,7 +153,35 @@ function drawShips() {
     console.log('player',playerShipsIndexes);
     console.log('computer',computerShipsIndexes);
 }
+function reset(){
+    drawShips();
 
+    btnContainer.classList.remove('hide');
+    playerTurnContainer.classList.add('hide');
+    container.classList.remove('flex-box');
+    playerBoard.classList.add('hide');
+    computerArrOfIndexes = [];
+    fillArray(computerArrOfIndexes);
+    playerArrOfIndexes = [];
+    fillArray(playerArrOfIndexes);
+
+    playerTurn = true;
+
+    playerBoardItems.forEach(function (item) {
+       item.innerText = "";
+    });
+    computerBoardItems.forEach(function (item) {
+        item.innerText = "";
+     });
+
+     counter1.innerText = "16";
+     counter2.innerText = "16";
+
+    document.getElementById("overlay").style.display = "none";
+    
+}
+
+// document.getElementById("overlay").style.display = "block";
 
 
 playerBoardItems.forEach(function (item, key) {
@@ -155,16 +190,22 @@ playerBoardItems.forEach(function (item, key) {
                 if (computerShipsIndexes.includes(key)){ 
                     computerShipsIndexes.splice(computerShipsIndexes.indexOf(key), 1);
                     item.innerText = '💥';
+                    counter1.innerText = computerShipsIndexes.length;
+                    if(computerShipsIndexes.length === 0){
+                        document.getElementById("overlay").style.display = "block";
+                        overlayMsg.innerText = "Player1 Wins";
+                    }
                     playAudio('./explosion.mp4');
                 } else {
                     item.innerText = '●';
                     playerTurn = false;
+                    playAudio('./rockWater.mp4');
                     if (!playerTurn && attackedShipIndex) {
                         surroundingIndexes();
                     } else {
                         setTimeout(() => {
                             computerClick(randomComputerClickIndex());
-                        }, 1000);
+                        }, 2000);
                     }
                 }
             }
@@ -184,23 +225,31 @@ function computerClick(clickedIndex) {
                 computerArrOfIndexes.splice(splicedIndex, 1);
                 console.log(computerArrOfIndexes);
                 item.innerText = '💥';
+                counter2.innerText = playerShipsIndexes.length;
+                if(playerShipsIndexes.length === 0){
+                    document.getElementById("overlay").style.display = "block";
+                    overlayMsg.innerText = "Computer Wins";
+                }
                 playAudio('./explosion.mp4');
-                if (!originalIndex) {
+
+                if (!originalIndex) { // if the original doesn't have a value: 
                     originalIndex = clickedIndex;
+                    checkSurroundedIndexes = -1 // Then the clicked index assigned to the original value 
                 }
                 attackedShipIndex = clickedIndex; // if found ship then assign the index to var
-                if (attackedShipIndex !== originalIndex) {
-                    found = true;
+                if (attackedShipIndex !== originalIndex) { // if the attack is not equal to original index that means that another ship index has beed clicked 
+                    found = true;  // so assigned the found to true so we know which direction we go through. 
                 } 
-                surroundingIndexes();
+                surroundingIndexes(); // then we call this function.
             } else {
                 item.innerText = '●';
-                playerTurn = true;
+                playerTurn = true; // the player turn if the computer hit on the water.
+                playAudio('./rockWater.mp4');
                 let splicedIndex = computerArrOfIndexes.indexOf(key);
-                computerArrOfIndexes.splice(splicedIndex, 1);
+                computerArrOfIndexes.splice(splicedIndex, 1); // spliced the clicked index from the array so the random doesn't use the number again.
                 console.log(computerArrOfIndexes);
 
-                if (attackedShipIndex && found) {
+                if (attackedShipIndex && found) { // change the value of found to false if the computer hits on the water
                     found = false;
                     // attackedShipIndex = originalIndex;
 
@@ -217,16 +266,16 @@ function computerClick(clickedIndex) {
 }
 
 function surroundingIndexes(){
-      if ((originalIndex !== attackedShipIndex) && !found){
+      if ((originalIndex !== attackedShipIndex) && !found){ // checks if the  original index === to the attacked and found = false
             if (checkSurroundedIndexes === 0){
                 checkSurroundedIndexes = 2
                 positionChecker(checkSurroundedIndexes, originalIndex);
-                attackedShipIndex = originalIndex;
+                // attackedShipIndex = originalIndex;
             } else if (checkSurroundedIndexes === 1){
                 checkSurroundedIndexes = 3;
                 positionChecker(checkSurroundedIndexes, originalIndex);
             } else if (checkSurroundedIndexes === 2){
-                checkSurroundedIndexes = 0;
+                checkSurroundedIndexes = 4;
                 positionChecker(checkSurroundedIndexes, originalIndex);
             } else if(checkSurroundedIndexes === 3){
                 checkSurroundedIndexes = 4;
@@ -234,52 +283,14 @@ function surroundingIndexes(){
             }
       } else if ((originalIndex !== attackedShipIndex) && found) {
           positionChecker(checkSurroundedIndexes,attackedShipIndex);
-      }else {
+      }else if((originalIndex !== attackedShipIndex) && found && (checkSurroundedIndexes===2 || checkSurroundedIndexes ===3)){
+        console.log('ship founded');
+      }
+      else{
             checkSurroundedIndexes++;
             positionChecker(checkSurroundedIndexes, attackedShipIndex);
         }
 }
-
-// function positionChecker(position, index) {
-//     if (position === 0){
-//         if(index - 10 > 0 && ){
-//             checkSurroundedIndexes++;
-//             positionChecker(checkSurroundedIndexes, index);
-//         }else if(){
-
-//         }
-        
-//         else{
-//             computerClick(index - 10);  
-//         }
-//     } else if (position === 1) {
-//         if(Math.floor(index/10) !== Math.floor((index+1)/10)){
-//             positionChecker(position+1, index);
-//         }else{
-//             computerClick(index+1);  
-//         }
-//     } else if (position === 2) {
-//         if(index + 10 > 99){
-//             positionChecker(position+1, index);
-//         }else{
-//             computerClick(index + 10);
-//         }
-//     } else if(position === 3) {
-//         if(Math.floor(index/10) !== Math.floor((index-1)/10)){
-//             positionChecker(position+1, index);
-//         }else{
-//             computerClick(index - 1);
-//         }
-//     } else {
-//         attackedShipIndex = null;
-//         originalIndex = null;
-//         playerTurn = true;
-//         found = false;
-//         checkSurroundedIndexes = -1;
-//         computerClick(randomComputerClickIndex());
-//    }
-// }
-
 
 
 function positionChecker(position, index){
@@ -301,17 +312,20 @@ function positionChecker(position, index){
         checkSurroundedIndexes = -1;
         setTimeout(() => {
             computerClick(randomComputerClickIndex()); 
-        }, 1000);
+        }, 2000);
     }
 
     if(computerArrOfIndexes.includes(index_)){
         setTimeout(() => {
             computerClick(index_);
-        }, 1000);
+        }, 2000);
     }else{
         found = false;
-        computerClick(randomComputerClickIndex());
+        playerTurn = false;
+        surroundingIndexes('founded');
     }
 }
+
+resetBtn.addEventListener('click', reset);
 
 
